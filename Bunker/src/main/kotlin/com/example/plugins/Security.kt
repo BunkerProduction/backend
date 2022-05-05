@@ -4,6 +4,7 @@ import com.example.session.GameSession
 import io.ktor.util.*
 import io.ktor.server.sessions.*
 import io.ktor.server.application.*
+import io.ktor.server.application.ApplicationCallPipeline.ApplicationPhase.Plugins
 
 fun Application.configureSecurity() {
 
@@ -11,7 +12,7 @@ fun Application.configureSecurity() {
         cookie<GameSession>("GAME_SESSION")
     }
 
-    intercept(ApplicationCallPipeline.Features) {
+    intercept(Plugins) {
     if(call.sessions.get<GameSession>() == null) //Проверка были ли уже сессия
     {
         val username = call.parameters["username"] ?: "Player"

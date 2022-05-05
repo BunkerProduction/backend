@@ -1,12 +1,10 @@
 package com.example.plugins
 
+import io.ktor.server.application.*
+import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import java.time.Duration
-import io.ktor.server.application.*
-import io.ktor.server.response.*
-import io.ktor.server.request.*
-import io.ktor.server.routing.*
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -17,17 +15,12 @@ fun Application.configureSockets() {
     }
 
     routing {
-        webSocket("/") { // websocketSession
-            for (frame in incoming) {
-                when (frame) {
-                    is Frame.Text -> {
-                        val text = frame.readText()
-                        outgoing.send(Frame.Text("YOU SAID: $text"))
-                        if (text.equals("bye", ignoreCase = true)) {
-                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
-                        }
-                    }
-                }
+        webSocket("/chat") {
+            send("You are connected!")
+            for(frame in incoming) {
+                frame as? Frame.Text ?: continue
+                val receivedText = frame.readText()
+                send("You said: $receivedText")
             }
         }
     }

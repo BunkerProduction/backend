@@ -13,7 +13,7 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.consumeEach
 
-fun Route.Connect_to_room() {
+fun Route.connect_to_room() {
     route("/connect_to_game/{number_room}") {
         get {
             val num_room = call.parameters["number_room"]
@@ -22,7 +22,7 @@ fun Route.Connect_to_room() {
     }
 }
 
-fun Route.Create_game() {
+fun Route.create_game() {
     route("/create_game") {
         put ("{room}"){
             val room = call.parameters["room"] ?: return@put
@@ -36,8 +36,8 @@ fun Route.Create_game() {
     }
 }
 
-fun Route.GameSocket(roomController: RoomController) {
-    webSocket("/game-socket") {
+fun Route.gameSocket(roomController: RoomController) {
+    webSocket("/game") {
         val session = call.sessions.get<GameSession>()
         if (session == null) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session."))
