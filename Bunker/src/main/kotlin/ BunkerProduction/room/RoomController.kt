@@ -1,17 +1,15 @@
 package com.example.room
 
+import ` BunkerProduction`.other_dataclasses.Status
 import com.example.other_dataclasses.DataSource
 import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.Random
 import java.util.concurrent.ConcurrentHashMap
 
-class RoomController (
-
-    private val DataSource: DataSource
-
-        ){
+class RoomController (){
      private val members = ConcurrentHashMap<String, Member>()
 
     fun onJoin(
@@ -29,15 +27,15 @@ class RoomController (
 
 
     }
-    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession)
+    suspend fun IamHere(username: String, sessionID: String)
     {
         members.values.forEach{ member ->
-            val status = Member(
+            val status = Status(
                 username = username,
                 sessionID = sessionID,
-                socket = socket
+
             )
-            val parsedStatus  = Json.encodeToString(Member)
+            val parsedStatus  = Json.encodeToString(status)
             member.socket.send(Frame.Text(parsedStatus))
         }
     }

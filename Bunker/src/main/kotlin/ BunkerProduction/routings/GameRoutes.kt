@@ -54,7 +54,7 @@ fun Route.gameSocket(roomController: RoomController) {
                     roomController.IamHere(
                         username = session.username,
                         sessionID = session.sessionID,
-                        socket = this
+
                     )
                 }
             }

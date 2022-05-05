@@ -1,5 +1,6 @@
 package com.example.other_dataclasses
 
+@kotlinx.serialization.Serializable
 data class Attribute(
     var isExposed: Boolean,
     val  icon: String,
