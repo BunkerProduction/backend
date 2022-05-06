@@ -1,8 +1,10 @@
 package  BunkerProduction
 
+import BunkerProduction.plugins.configureRouting
+import BunkerProduction.plugins.configureSecurity
+import BunkerProduction.plugins.configureSerialization
+import BunkerProduction.plugins.configureSockets
 import io.ktor.server.application.*
-import  BunkerProduction.plugins.*
-import org.koin.ktor.ext.Koin
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
