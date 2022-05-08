@@ -1,7 +1,10 @@
 package com.BunkerProduction
 
+import com.BunkerProduction.plugins.configureRouting
+import com.BunkerProduction.plugins.configureSecurity
+import com.BunkerProduction.plugins.configureSerialization
+import com.BunkerProduction.plugins.configureSockets
 import io.ktor.server.application.*
-import com.BunkerProduction.plugins.*
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -12,4 +15,5 @@ fun Application.module() {
     configureRouting()
     configureSerialization()
     configureSecurity()
+
 }
