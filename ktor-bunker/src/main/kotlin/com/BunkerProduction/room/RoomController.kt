@@ -24,14 +24,15 @@ class RoomController (){
 
     }
 
-    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String)
+    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String, connection: String)
     {
-//        print(members.values) //Хэш-карта
+       print(members.values) //Хэш-карта
         members.values.forEach{ member ->
             val status = Status(
                 username = username,
                 sessionID = sessionID,
-                text = text
+                text = text,
+                connection = connection
             )
 
             val player1: Player = Player(

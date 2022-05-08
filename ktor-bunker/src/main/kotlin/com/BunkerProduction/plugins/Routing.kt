@@ -2,8 +2,6 @@ package com.BunkerProduction.plugins
 
 import com.BunkerProduction.di.di
 import com.BunkerProduction.room.RoomController
-import com.BunkerProduction.routings.connect_to_room
-import com.BunkerProduction.routings.create_game
 import com.BunkerProduction.routings.gameSocket
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -17,8 +15,6 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hi! it's Bunker")
         }
-        connect_to_room()
-        create_game()
         gameSocket(roomController)
     }
 }
