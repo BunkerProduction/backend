@@ -1,7 +1,5 @@
 package com.BunkerProduction.other_dataclasses
 
-import java.util.Arrays
-
 @kotlinx.serialization.Serializable
 
 data class Shelter(

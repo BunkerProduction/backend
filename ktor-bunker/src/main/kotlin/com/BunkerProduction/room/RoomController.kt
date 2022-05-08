@@ -24,13 +24,14 @@ class RoomController (){
 
     }
 
-    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession)
+    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String)
     {
-        print(members.values)
+//        print(members.values) //Хэш-карта
         members.values.forEach{ member ->
             val status = Status(
                 username = username,
                 sessionID = sessionID,
+                text = text
             )
 
             val player1: Player = Player(
@@ -61,7 +62,6 @@ class RoomController (){
 //            var parseMapPlayerToMapVotes = Json.encodeToString(MapPlayerToMapVotes)
             val parsedStatus  = Json.encodeToString(status)
             member.socket.send(Frame.Text(parsedStatus))
-
 //            member.socket.send(Frame.Text(parseMapVotesToArrayPlayers))
 //            member.socket.send(Frame.Text(parseMapPlayerToMapVotes))
         }
