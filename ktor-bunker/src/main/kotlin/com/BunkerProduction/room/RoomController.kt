@@ -7,7 +7,7 @@ import kotlinx.serialization.json.Json
 import java.util.concurrent.ConcurrentHashMap
 
 class RoomController (){
-     private val members = ConcurrentHashMap<String, Member>()
+     private val members = ConcurrentHashMap<String, Player>()
 
     fun onJoin(
         username: String,
@@ -16,7 +16,7 @@ class RoomController (){
 
     ) {
 
-        members[username] = Member(
+        members[username] = Player(
             username = username,
             sessionID = sessionID,
             socket = socket

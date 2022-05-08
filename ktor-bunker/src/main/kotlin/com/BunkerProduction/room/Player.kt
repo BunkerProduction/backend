@@ -3,8 +3,9 @@ package com.BunkerProduction.room
 import io.ktor.websocket.*
 
 @kotlinx.serialization.Serializable
-data class Member(
+data class Player(
     val username: String,
     val sessionID: String,
-    val socket: WebSocketSession
+    val socket: WebSocketSession,
+
 )

@@ -1,6 +1,6 @@
 package com.BunkerProduction.room
 
 @kotlinx.serialization.Serializable
-class MemberAlreadyExistsException: Exception (
+class PlayerAlreadyExistsException: Exception (
     "Участник с таким именем есть"
 )
