@@ -60,7 +60,6 @@ fun Route.gameSocket(roomController: RoomController) {
 
 
 
-
         } catch (e: Exception) {
             e.printStackTrace()
         }

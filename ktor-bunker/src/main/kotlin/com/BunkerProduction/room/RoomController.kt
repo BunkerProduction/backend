@@ -13,7 +13,6 @@ class RoomController (){
         username: String,
         sessionID: String,
         socket: WebSocketSession,
-
     ) {
 
         members[username] = Player(
@@ -61,7 +60,6 @@ class RoomController (){
 //            var parseMapVotesToArrayPlayers = Json.encodeToString(MapVotesToArrayPlayers)
 //            var parseMapPlayerToMapVotes = Json.encodeToString(MapPlayerToMapVotes)
             val parsedStatus  = Json.encodeToString(status)
-            member.socket.send(Frame.Text(parsedStatus))
             member.socket.send(Frame.Text(parsedStatus))
 
 //            member.socket.send(Frame.Text(parseMapVotesToArrayPlayers))

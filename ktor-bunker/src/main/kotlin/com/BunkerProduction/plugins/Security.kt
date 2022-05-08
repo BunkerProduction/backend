@@ -14,12 +14,20 @@ fun Application.configureSecurity() {
     }
 
     intercept(ApplicationCallPipeline.Plugins) {
-        if(call.sessions.get<GameSession>() == null) //Проверка были ли уже сессия
+
+        if((call.sessions.get<GameSession>() == null)) //Проверка были ли уже сессия
         {
             val username = call.parameters["username"] ?: "Player"
-            call.sessions.set(GameSession(username, generateNonce())) //generateNonce - генерация идентификатора сеанса
+            val sessionID = call.parameters["sessionID"] ?: "None"
+            print(sessionID + username)
+            if(sessionID == "None") {
+                call.sessions.set(GameSession(username, generateNonce()))
+            }//generateNonce - генерация идентификатора сеанса
+            else
+            {
+                call.sessions.set(GameSession(username, sessionID))
+            }
         }
-
 
         }
     }
