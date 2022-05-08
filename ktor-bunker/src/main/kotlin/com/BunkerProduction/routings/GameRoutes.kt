@@ -37,6 +37,7 @@ fun Route.create_game() {
 fun Route.gameSocket(roomController: RoomController) {
     webSocket("/game") {
         val session = call.sessions.get<GameSession>()
+
         if (session == null) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session."))
             return@webSocket
@@ -52,13 +53,18 @@ fun Route.gameSocket(roomController: RoomController) {
                     roomController.IamHere(
                         username = session.username,
                         sessionID = session.sessionID,
-
+                        socket = this
                     )
                 }
             }
+
+
+
+
         } catch (e: Exception) {
             e.printStackTrace()
-        } finally {
+        }
+        finally {
             roomController.tryDissconect(session.username)
         }
 
