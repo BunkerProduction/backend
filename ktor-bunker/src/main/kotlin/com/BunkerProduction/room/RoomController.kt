@@ -4,9 +4,11 @@ import com.BunkerProduction.other_dataclasses.Status
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.StringJoiner
 import java.util.concurrent.ConcurrentHashMap
 
 class RoomController (){
+
      private val members = ConcurrentHashMap<String, Player>()
 
     fun onJoin(
@@ -27,6 +29,7 @@ class RoomController (){
     suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String, connection: String)
     {
        print(members.values) //Хэш-карта
+
         members.values.forEach{ member ->
             val status = Status(
                 username = username,
@@ -76,6 +79,8 @@ class RoomController (){
             members.remove(username) //удаление из хэш карты
         }
     }
+
+
 
 }
 
