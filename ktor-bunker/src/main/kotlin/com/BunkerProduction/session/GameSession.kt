@@ -6,6 +6,6 @@ import com.BunkerProduction.other_dataclasses.GameModel
 data class GameSession(
     val username: String,
     val sessionID: String,
-    val isCreator: Boolean,
+    val isCreator: String,
     var gameModel: GameModel
 )

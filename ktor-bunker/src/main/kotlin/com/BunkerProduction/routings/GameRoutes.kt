@@ -1,5 +1,6 @@
 package com.BunkerProduction.routings
 
+import com.BunkerProduction.other_dataclasses.GameModel
 import com.BunkerProduction.room.RoomController
 import com.BunkerProduction.session.GameSession
 import io.ktor.server.routing.*
@@ -26,12 +27,13 @@ fun Route.gameSocket(roomController: RoomController) {
         send("You've logged in as [${thisConnection.name}]")
 
         val session = call.sessions.get<GameSession>()
+
         if (session == null) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session."))
             return@webSocket
         }
         try {
-            if(session.isCreator) {
+            if(session.isCreator.toBoolean()) {
                 roomController.onCreateGame(
                     username = session.username,
                     sessionID = session.sessionID,
@@ -39,7 +41,7 @@ fun Route.gameSocket(roomController: RoomController) {
                     gameModel = session.gameModel
                 )
             }
-            if(!session.isCreator) {
+            if(!session.isCreator.toBoolean()) {
                 roomController.onJoin(
                     username = session.username,
                     sessionID = session.sessionID,
@@ -55,7 +57,8 @@ fun Route.gameSocket(roomController: RoomController) {
                         socket = this,
                         text = frame.readText(),
                         connection = thisConnection.name,
-                        isCreator = session.isCreator
+                        isCreator = session.isCreator.toBoolean(),
+                        gameModel = session.gameModel
                     )
                 }
             }

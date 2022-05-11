@@ -21,13 +21,13 @@ fun Application.configureSecurity() {
 
         if((call.sessions.get<GameSession>() == null)) //Проверка были ли уже сессии
         {
-            val username = call.parameters["username"] ?: "Player"
+            var username = call.parameters["username"] ?: "Player"
             var sessionID = call.parameters["sessionID"] ?: "None"
-            val isCreator = call.parameters["isCreator"] ?: true
-            val voitingTime = call.parameters["voitingTime"] ?: 0
-            val initialNumberOfPlayers = call.parameters["initialNumberOfPlayers"] ?: 0
-            val turn = call.parameters["turn"] ?: 0
-            val round = call.parameters["round"] ?: 0
+            var isCreator = call.parameters["isCreator"] ?: "true"
+            var voitingTime = call.parameters["voitingTime"] ?: 0
+            var initialNumberOfPlayers = call.parameters["initialNumberOfPlayers"] ?: 0
+            var turn = call.parameters["turn"] ?: 0
+            var round = call.parameters["round"] ?: 0
 
             val catastrophe = Catastrophe(
                 name = "Beercalypse",
@@ -64,21 +64,21 @@ fun Application.configureSecurity() {
             )
             var gameState = GameState.normal //по умолчанию стоит normal
 
-            val player1: Player = Player(
-                username = "Tim",
-                sessionID = "12313",
-                socket = null
-            )
-            val player2: Player = Player(
-                username = "Kevin",
-                sessionID = "12313",
-                socket = null
-            )
-            val ArrayPlayer: Array<Player> = arrayOf(player1, player2)
-            var MapPlayerToMapVotes = mutableMapOf(1 to ArrayPlayer)
-            var MapVotesToArrayPlayers = mutableMapOf(
-                player1 to MapPlayerToMapVotes,
-                player2 to MapPlayerToMapVotes)
+//            val player1: Player = Player(
+//                username = "Tim",
+//                sessionID = "12313",
+//                socket = null
+//            )
+//            val player2: Player = Player(
+//                username = "Kevin",
+//                sessionID = "12313",
+//                socket = null
+//            )
+//            var ArrayPlayer: Array<Player> = arrayOf(player1, player2)
+//            var MapPlayerToMapVotes = mutableMapOf(1 to ArrayPlayer)
+//            var MapVotesToArrayPlayers = mutableMapOf(
+//                player1 to MapPlayerToMapVotes,
+//                player2 to MapPlayerToMapVotes)
 
             var gameModel = GameModel(
                 preferences = gamePreferences,
@@ -87,16 +87,16 @@ fun Application.configureSecurity() {
                 initialNumberOfPlayers = initialNumberOfPlayers as Int,
                 turn = turn as Int,
                 round = round as Int,
-                votes = MapVotesToArrayPlayers
+//                votes = MapVotesToArrayPlayers
             )
 
             if(sessionID == "None") {
                 sessionID = roomController.Exist(sessionID)
-                call.sessions.set(GameSession(username, sessionID, isCreator as Boolean, gameModel))
+                call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
             }//generateNonce - генерация идентификатора сеанса
             else
             {
-                call.sessions.set(GameSession(username, sessionID, isCreator as Boolean, gameModel))
+                call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
             }
         }
 

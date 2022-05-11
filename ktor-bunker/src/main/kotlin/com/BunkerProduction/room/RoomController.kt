@@ -50,7 +50,7 @@ class RoomController () {
 
     }
 
-    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String, connection: String, isCreator: Boolean)
+    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, gameModel: GameModel, text: String, connection: String, isCreator: Boolean)
     {
        print(members.values) //Хэш-карта
 
@@ -60,7 +60,8 @@ class RoomController () {
                 sessionID = sessionID,
                 text = text,
                 connection = connection,
-                isCreator = isCreator
+                isCreator = isCreator,
+                gameModel = gameModel
             )
 
             val parsedStatus  = Json.encodeToString(status)

@@ -8,6 +8,7 @@ data class Status(
     var sessionID: String,
     var text: String,
     var connection: String, //connection [user0......n]
-    var isCreator: Boolean
+    var isCreator: Boolean,
+    var gameModel: GameModel
 )
 

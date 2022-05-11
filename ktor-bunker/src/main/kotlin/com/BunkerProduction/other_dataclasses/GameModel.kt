@@ -11,7 +11,7 @@ data class GameModel(
     var initialNumberOfPlayers: Int,
     var turn: Int,
     var round: Int,
-    var votes: MutableMap<Player, MutableMap<Int, Array<Player>>>
+//    var votes: MutableMap<Player, MutableMap<Int, Array<Player>>>
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -20,24 +20,27 @@ data class GameModel(
         other as GameModel
 
         if (preferences != other.preferences) return false
-        if (!players.contentEquals(other.players)) return false
+        if (players != null) {
+            if (other.players == null) return false
+            if (!players.contentEquals(other.players)) return false
+        } else if (other.players != null) return false
         if (gameState != other.gameState) return false
         if (initialNumberOfPlayers != other.initialNumberOfPlayers) return false
         if (turn != other.turn) return false
         if (round != other.round) return false
-        if (votes != other.votes) return false
+
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = preferences.hashCode()
-        result = 31 * result + players.contentHashCode()
+        result = 31 * result + (players?.contentHashCode() ?: 0)
         result = 31 * result + gameState.hashCode()
         result = 31 * result + initialNumberOfPlayers
         result = 31 * result + turn
         result = 31 * result + round
-        result = 31 * result + votes.hashCode()
+
         return result
     }
 }
