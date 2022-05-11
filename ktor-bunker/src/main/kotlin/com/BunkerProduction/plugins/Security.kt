@@ -18,7 +18,7 @@ fun Application.configureSecurity() {
 
     intercept(ApplicationCallPipeline.Plugins) {
 
-        if((call.sessions.get<GameSession>() == null)) //Проверка были ли уже сессия
+        if((call.sessions.get<GameSession>() == null)) //Проверка были ли уже сессии
         {
             val username = call.parameters["username"] ?: "Player"
             var sessionID = call.parameters["sessionID"] ?: "None"

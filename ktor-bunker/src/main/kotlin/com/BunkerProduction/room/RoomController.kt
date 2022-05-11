@@ -1,6 +1,8 @@
 package com.BunkerProduction.room
 
 import com.BunkerProduction.other_dataclasses.Status
+import com.BunkerProduction.session.GenerateRoomCode
+import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -9,26 +11,30 @@ import java.util.concurrent.ConcurrentHashMap
 
 class RoomController (){
 
-     private val members = ConcurrentHashMap<String, Player>()
+    private val members = ConcurrentHashMap<String, Player>()
 
     fun onJoin(
         username: String,
         sessionID: String,
         socket: WebSocketSession,
     ) {
+        var sessionIDforGeneration = sessionID //для генерации
+        while (members.containsKey("$sessionIDforGeneration"))
+        {
+            sessionIDforGeneration = GenerateRoomCode()
+        }
 
         members[username] = Player(
             username = username,
-            sessionID = sessionID,
+            sessionID = sessionIDforGeneration,
             socket = socket
         )
-
 
     }
 
     suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String, connection: String)
     {
-       print(members.values) //Хэш-карта
+//       print(members.values) //Хэш-карта
 
         members.values.forEach{ member ->
             val status = Status(
