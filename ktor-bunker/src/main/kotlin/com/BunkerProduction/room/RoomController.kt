@@ -9,7 +9,18 @@ import java.util.concurrent.ConcurrentHashMap
 
 class RoomController () {
 
-    private val members = ConcurrentHashMap<String, Player>()
+     private val members = ConcurrentHashMap<String, Player>()
+     private val gamemodel = ConcurrentHashMap<String, GameModel>()
+    fun getPlayers(sessionID: String): MutableList<Player> {
+        var PlayersList: MutableList<Player> = mutableListOf()
+            members.values.forEach { member ->
+            if (member.sessionID == sessionID) {
+                PlayersList.add(member)
+            }
+        }
+
+        return PlayersList
+    }
     fun Exist(sessionID: String): String {
         var sessionIDmoded = sessionID
         if (sessionIDmoded == "None") {
@@ -22,6 +33,8 @@ class RoomController () {
         }
             return sessionIDmoded
     }
+
+
     fun onCreateGame(
         username: String,
         sessionID: String,
@@ -29,12 +42,22 @@ class RoomController () {
         gameModel: GameModel
     )
     {
-
         members[username] = Player(
             username = username,
             sessionID = sessionID,
             socket = socket
         )
+        gamemodel[sessionID] = GameModel(
+            sessionID = sessionID,
+            preferences = gameModel.preferences,
+            players = getPlayers(sessionID),
+            gameState = gameModel.gameState,
+            initialNumberOfPlayers = gameModel.initialNumberOfPlayers,
+            turn = gameModel.turn,
+            round = gameModel.round
+        )
+
+
     }
     fun onJoin(
         username: String,
@@ -52,7 +75,8 @@ class RoomController () {
 
     suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, gameModel: GameModel, text: String, connection: String, isCreator: Boolean)
     {
-       print(members.values) //Хэш-карта
+//     print(members.values.toMutableList()) //Хэш-карта играков
+        print(gamemodel.values) //Хэш-карта игровых моделей
 
         members.values.forEach{ member ->
             val status = Status(

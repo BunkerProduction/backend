@@ -3,12 +3,10 @@ package com.BunkerProduction.plugins
 import com.BunkerProduction.di.di
 import com.BunkerProduction.enums.GameState
 import com.BunkerProduction.other_dataclasses.*
-import com.BunkerProduction.room.Player
 import com.BunkerProduction.room.RoomController
 import com.BunkerProduction.session.GameSession
 import io.ktor.server.application.*
 import io.ktor.server.sessions.*
-import io.ktor.websocket.*
 import org.kodein.di.newInstance
 
 
@@ -80,22 +78,35 @@ fun Application.configureSecurity() {
 //                player1 to MapPlayerToMapVotes,
 //                player2 to MapPlayerToMapVotes)
 
-            var gameModel = GameModel(
-                preferences = gamePreferences,
-                players = null,
-                gameState = gameState,
-                initialNumberOfPlayers = initialNumberOfPlayers as Int,
-                turn = turn as Int,
-                round = round as Int,
-//                votes = MapVotesToArrayPlayers
-            )
+
 
             if(sessionID == "None") {
                 sessionID = roomController.Exist(sessionID)
+
+                var gameModel = GameModel(
+                    sessionID =sessionID,
+                    preferences = gamePreferences,
+                    players = null,
+                    gameState = gameState,
+                    initialNumberOfPlayers = initialNumberOfPlayers as Int,
+                    turn = turn as Int,
+                    round = round as Int,
+//                votes = MapVotesToArrayPlayers
+                )
                 call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
             }//generateNonce - генерация идентификатора сеанса
             else
             {
+                var gameModel = GameModel(
+                    sessionID = sessionID,
+                    preferences = gamePreferences,
+                    players = null,
+                    gameState = gameState,
+                    initialNumberOfPlayers = initialNumberOfPlayers as Int,
+                    turn = turn as Int,
+                    round = round as Int,
+//                votes = MapVotesToArrayPlayers
+                )
                 call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
             }
         }

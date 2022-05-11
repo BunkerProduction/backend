@@ -33,7 +33,7 @@ fun Route.gameSocket(roomController: RoomController) {
             return@webSocket
         }
         try {
-            if(session.isCreator.toBoolean()) {
+            if(session.isCreator == "true") {
                 roomController.onCreateGame(
                     username = session.username,
                     sessionID = session.sessionID,
@@ -41,7 +41,7 @@ fun Route.gameSocket(roomController: RoomController) {
                     gameModel = session.gameModel
                 )
             }
-            if(!session.isCreator.toBoolean()) {
+            if(session.isCreator == "false") {
                 roomController.onJoin(
                     username = session.username,
                     sessionID = session.sessionID,
