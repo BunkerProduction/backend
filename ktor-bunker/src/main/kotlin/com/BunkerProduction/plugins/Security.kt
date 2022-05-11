@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 
 fun Application.configureSecurity() {
-
     install(Sessions) {
         cookie<GameSession>("GAME_SESSION")
     }
