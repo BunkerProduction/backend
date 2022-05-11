@@ -7,7 +7,7 @@ data class Status(
     var username: String,
     var sessionID: String,
     var text: String,
-    var connection: String //connection [user0......n]
-
+    var connection: String, //connection [user0......n]
+    var isCreator: Boolean
 )
 

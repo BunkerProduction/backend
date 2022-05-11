@@ -1,9 +1,5 @@
 package com.BunkerProduction.session
 
-import com.BunkerProduction.room.Player
-import java.util.concurrent.ConcurrentHashMap
-
-
 fun GenerateRoomCode(): String {
     var sessionID = (1..999999).random()
     var count = 0

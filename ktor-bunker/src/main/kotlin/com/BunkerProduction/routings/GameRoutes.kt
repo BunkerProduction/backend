@@ -15,7 +15,6 @@ class Connection(val session: DefaultWebSocketSession) {
     companion object {
         var lastId = AtomicInteger(0)
     }
-
     val name = "user${lastId.getAndIncrement()}"
 }
 
@@ -26,18 +25,27 @@ fun Route.gameSocket(roomController: RoomController) {
         connections += thisConnection
         send("You've logged in as [${thisConnection.name}]")
 
-
         val session = call.sessions.get<GameSession>()
         if (session == null) {
             close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session."))
             return@webSocket
         }
         try {
-            roomController.onJoin(
-                username = session.username,
-                sessionID = session.sessionID,
-                socket = this
-            )
+            if(session.isCreator) {
+                roomController.onCreateGame(
+                    username = session.username,
+                    sessionID = session.sessionID,
+                    socket = this,
+                    gameModel = session.gameModel
+                )
+            }
+            if(!session.isCreator) {
+                roomController.onJoin(
+                    username = session.username,
+                    sessionID = session.sessionID,
+                    socket = this
+                )
+            }
 
             incoming.consumeEach { frame ->
                 if ((frame is Frame.Text)){
@@ -46,12 +54,11 @@ fun Route.gameSocket(roomController: RoomController) {
                         sessionID = session.sessionID,
                         socket = this,
                         text = frame.readText(),
-                        connection = thisConnection.name
+                        connection = thisConnection.name,
+                        isCreator = session.isCreator
                     )
                 }
             }
-
-
 
         } catch (e: Exception) {
             e.printStackTrace()

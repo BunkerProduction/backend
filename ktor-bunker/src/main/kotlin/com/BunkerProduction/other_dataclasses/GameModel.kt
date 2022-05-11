@@ -3,9 +3,10 @@ package com.BunkerProduction.other_dataclasses
 import com.BunkerProduction.enums.GameState
 import com.BunkerProduction.room.Player
 
+@kotlinx.serialization.Serializable
 data class GameModel(
     val preferences: GamePreferences,
-    val players: Array<Player>,
+    val players: Array<Player>?,
     val gameState: GameState,
     var initialNumberOfPlayers: Int,
     var turn: Int,

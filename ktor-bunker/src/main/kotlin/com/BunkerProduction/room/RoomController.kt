@@ -1,82 +1,71 @@
 package com.BunkerProduction.room
 
-import com.BunkerProduction.other_dataclasses.Status
+import com.BunkerProduction.other_dataclasses.*
 import com.BunkerProduction.session.GenerateRoomCode
-import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.util.StringJoiner
 import java.util.concurrent.ConcurrentHashMap
 
-class RoomController (){
+class RoomController () {
 
     private val members = ConcurrentHashMap<String, Player>()
+    fun Exist(sessionID: String): String {
+        var sessionIDmoded = sessionID
+        if (sessionIDmoded == "None") {
+            sessionIDmoded = GenerateRoomCode()
+        }
+        members.values.forEach { member ->
+            while (member.sessionID != sessionID) {
+                sessionIDmoded = GenerateRoomCode()
+            }
+        }
+            return sessionIDmoded
+    }
+    fun onCreateGame(
+        username: String,
+        sessionID: String,
+        socket: WebSocketSession,
+        gameModel: GameModel
+    )
+    {
 
+        members[username] = Player(
+            username = username,
+            sessionID = sessionID,
+            socket = socket
+        )
+    }
     fun onJoin(
         username: String,
         sessionID: String,
         socket: WebSocketSession,
     ) {
-        var sessionIDforGeneration = sessionID //для генерации
-        while (members.containsKey("$sessionIDforGeneration"))
-        {
-            sessionIDforGeneration = GenerateRoomCode()
-        }
 
         members[username] = Player(
             username = username,
-            sessionID = sessionIDforGeneration,
+            sessionID = sessionID,
             socket = socket
         )
 
     }
 
-    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String, connection: String)
+    suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, text: String, connection: String, isCreator: Boolean)
     {
-//       print(members.values) //Хэш-карта
+       print(members.values) //Хэш-карта
 
         members.values.forEach{ member ->
             val status = Status(
                 username = username,
                 sessionID = sessionID,
                 text = text,
-                connection = connection
+                connection = connection,
+                isCreator = isCreator
             )
 
-            val player1: Player = Player(
-                username = "Tim",
-                sessionID = "12313",
-                socket = socket
-            )
-            val player2: Player = Player(
-                username = "Kevin",
-                sessionID = "12313",
-                socket = socket
-            )
-            val player3: Player = Player(
-                username = "Jane",
-                sessionID = "12313",
-                socket = socket
-            )
-            val list: MutableList<String> = ArrayList()
-            list+=username
-//            val ArrayPlayer: Array<Player> = arrayOf(player1, player2)
-//            var MapPlayerToMapVotes = mutableMapOf(1 to ArrayPlayer)
-//            var MapVotesToArrayPlayers = mutableMapOf(
-//                player1 to MapPlayerToMapVotes,
-//                player2 to MapPlayerToMapVotes
-//            )
-
-//            var parseMapVotesToArrayPlayers = Json.encodeToString(MapVotesToArrayPlayers)
-//            var parseMapPlayerToMapVotes = Json.encodeToString(MapPlayerToMapVotes)
             val parsedStatus  = Json.encodeToString(status)
-            member.socket.send(Frame.Text(parsedStatus))
-//            member.socket.send(Frame.Text(parseMapVotesToArrayPlayers))
-//            member.socket.send(Frame.Text(parseMapPlayerToMapVotes))
+            member.socket?.send(Frame.Text(parsedStatus))
         }
-
-
     }
 
     suspend fun tryDissconect(username: String){
@@ -89,5 +78,6 @@ class RoomController (){
 
 
 }
+
 
 
