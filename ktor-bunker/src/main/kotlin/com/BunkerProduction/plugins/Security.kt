@@ -79,23 +79,9 @@ fun Application.configureSecurity() {
 //                player2 to MapPlayerToMapVotes)
 
 
-            if(sessionID == "None") {
-                sessionID = roomController.Exist(sessionID)
+            if((sessionID == "None")&&(isCreator == "true")) {
+                sessionID = roomController.isExist(sessionID)
 
-                var gameModel = GameModel(
-                    sessionID =sessionID,
-                    preferences = gamePreferences,
-                    players = null,
-                    gameState = gameState,
-                    initialNumberOfPlayers = initialNumberOfPlayers as Int,
-                    turn = turn as Int,
-                    round = round as Int,
-//                votes = MapVotesToArrayPlayers
-                )
-                call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
-            }//generateNonce - генерация идентификатора сеанса
-            else
-            {
                 var gameModel = GameModel(
                     sessionID = sessionID,
                     preferences = gamePreferences,
@@ -108,6 +94,20 @@ fun Application.configureSecurity() {
                 )
                 call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
             }
+            if((sessionID != "None")&&(isCreator == "false")) {
+                var gameModel = GameModel(
+                    sessionID = sessionID,
+                    preferences = gamePreferences,
+                    players = null,
+                    gameState = gameState,
+                    initialNumberOfPlayers = initialNumberOfPlayers as Int,
+                    turn = turn as Int,
+                    round = round as Int,
+//                votes = MapVotesToArrayPlayers
+                )
+                call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
+            }
+
         }
 
         }

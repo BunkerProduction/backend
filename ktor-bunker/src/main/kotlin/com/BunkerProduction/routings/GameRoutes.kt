@@ -36,7 +36,6 @@ fun Route.gameSocket(roomController: RoomController) {
             return@webSocket
         }
         try {
-
             if(session.isCreator == "true") {
                 roomController.onCreateGame(
                     username = session.username,
@@ -47,7 +46,7 @@ fun Route.gameSocket(roomController: RoomController) {
                 send("gameModel: ${roomController.getgameModels()}")
                 send("is : ${session.isCreator}")
             }
-            if(session.isCreator == "false") {
+            if((session.isCreator == "false")&&(roomController.roomisExist(session.sessionID))) {
                 roomController.onJoin(
                     username = session.username,
                     sessionID = session.sessionID,
@@ -56,7 +55,12 @@ fun Route.gameSocket(roomController: RoomController) {
                 send("gameModels: ${roomController.getgameModels()}")
                 send("is : ${session.isCreator}")
             }
-
+            if((session.isCreator == "false")&&(!roomController.roomisExist(session.sessionID))) {
+                close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "This session is not exist"))
+                return@webSocket
+                send("gameModels: ${roomController.getgameModels()}")
+                send("is : ${session.isCreator}")
+            }
             incoming.consumeEach { frame ->
                 if ((frame is Frame.Text)) {
                     roomController.IamHere(
@@ -71,6 +75,7 @@ fun Route.gameSocket(roomController: RoomController) {
                 }
 
                 send("gameModels: ${roomController.getgameModels()}")
+                send("roomisexist: ${roomController.roomisExist(session.sessionID)}")
                 send("connections_list: [${connections}]")
                 send("Players_in_Hash_Map: [${roomController.get_members()}]")
             }

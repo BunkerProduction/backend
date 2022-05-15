@@ -14,6 +14,7 @@ class RoomController () {
 
     fun getgameModels(): MutableList<GameModel> { return gamemodel.values.toMutableList() }
     fun get_members() : MutableCollection<Player> { return members.values}
+    fun roomisExist(sessionID: String): Boolean {return gamemodel.containsKey(sessionID)}
     fun getPlayers(sessionID: String): MutableList<Player> {
         var PlayersList: MutableList<Player> = mutableListOf()
             members.values.forEach { member ->
@@ -23,7 +24,7 @@ class RoomController () {
         }
         return PlayersList
     }
-    fun Exist(sessionID: String): String {
+    fun isExist(sessionID: String): String { // Для нового подключения
         var sessionIDmoded = sessionID
         if (sessionIDmoded == "None") {
             sessionIDmoded = GenerateRoomCode()
@@ -71,7 +72,10 @@ class RoomController () {
             sessionID = sessionID,
             socket = socket
         )
+
         members[username]?.let { gamemodel[sessionID]?.players?.add(it) }
+
+
 
     }
 
