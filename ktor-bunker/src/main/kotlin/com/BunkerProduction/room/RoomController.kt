@@ -105,6 +105,10 @@ class RoomController () {
             members.remove(username) //удаление из хэш карты Members
         }
         gamemodel[sessionID]?.players = getPlayers(sessionID) // Обновление модели игры
+        if (gamemodel[sessionID]?.players?.isEmpty() == true)
+        {
+            gamemodel.remove(sessionID)
+        }
     }
 
 }
