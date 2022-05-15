@@ -6,5 +6,5 @@ import io.ktor.websocket.*
 data class Player(
     val username: String,
     val sessionID: String,
-    val socket: WebSocketSession?,
+    var socket: WebSocketSession?,
 )

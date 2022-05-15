@@ -11,6 +11,9 @@ class RoomController () {
 
      private val members = ConcurrentHashMap<String, Player>()
      private val gamemodel = ConcurrentHashMap<String, GameModel>()
+
+    fun getgameModels(): MutableList<GameModel> { return gamemodel.values.toMutableList() }
+    fun get_members() : MutableCollection<Player> { return members.values}
     fun getPlayers(sessionID: String): MutableList<Player> {
         var PlayersList: MutableList<Player> = mutableListOf()
             members.values.forEach { member ->
@@ -18,7 +21,6 @@ class RoomController () {
                 PlayersList.add(member)
             }
         }
-
         return PlayersList
     }
     fun Exist(sessionID: String): String {
@@ -50,13 +52,12 @@ class RoomController () {
         gamemodel[sessionID] = GameModel(
             sessionID = sessionID,
             preferences = gameModel.preferences,
-            players = getPlayers(sessionID),
+            players = getPlayers(sessionID), //Берет всех играков из сессии, хотя она только что создалась (не нужно )
             gameState = gameModel.gameState,
             initialNumberOfPlayers = gameModel.initialNumberOfPlayers,
             turn = gameModel.turn,
             round = gameModel.round
         )
-
 
     }
     fun onJoin(
@@ -65,18 +66,19 @@ class RoomController () {
         socket: WebSocketSession,
     ) {
 
-        members[username] = Player(
+       members[username] = Player(
             username = username,
             sessionID = sessionID,
             socket = socket
         )
+        members[username]?.let { gamemodel[sessionID]?.players?.add(it) }
 
     }
 
     suspend fun IamHere(username: String, sessionID: String, socket: WebSocketSession, gameModel: GameModel, text: String, connection: String, isCreator: Boolean)
     {
 //     print(members.values.toMutableList()) //Хэш-карта играков
-        print(gamemodel.values) //Хэш-карта игровых моделей
+//        print(gamemodel.values) //Хэш-карта игровых моделей
 
         members.values.forEach{ member ->
             val status = Status(
@@ -93,14 +95,13 @@ class RoomController () {
         }
     }
 
-    suspend fun tryDissconect(username: String){
+    suspend fun tryDissconect(username: String, sessionID: String){
         members[username]?.socket?.close() // Закрываем сессию для user
         if(members.containsKey(username)){
-            members.remove(username) //удаление из хэш карты
+            members.remove(username) //удаление из хэш карты Members
         }
+        gamemodel[sessionID]?.players = getPlayers(sessionID) // Обновление модели игры
     }
-
-
 
 }
 

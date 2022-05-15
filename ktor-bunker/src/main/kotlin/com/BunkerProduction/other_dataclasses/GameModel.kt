@@ -7,7 +7,7 @@ import com.BunkerProduction.room.Player
 data class GameModel(
     var sessionID: String,
     val preferences: GamePreferences,
-    val players: MutableList<Player>?,
+    var players: MutableList<Player>?,
     val gameState: GameState,
     var initialNumberOfPlayers: Int,
     var turn: Int,

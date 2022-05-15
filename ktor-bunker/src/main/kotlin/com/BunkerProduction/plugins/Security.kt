@@ -28,30 +28,30 @@ fun Application.configureSecurity() {
             var round = call.parameters["round"] ?: 0
 
             val catastrophe = Catastrophe(
-                name = "Beercalypse",
+                name = ".",
                 icon = "🍺",
-                shortDescription = "Aliens started clonin beer.",
-                fullDescription = "You arrived"
+                shortDescription = ".",
+                fullDescription = "."
                     )
 
             val shelterCondition = ShelterCondition(
                 isExposed = false,
                 icon = "🤢",
-                name = "First aid kit",
-                description = "There is a first aid kit, rubber gloves, masks and a defibrillator at the entrance."
+                name = ".",
+                description = "."
             )
 
             val shelter = Shelter(
-                name = "School Toilet",
+                name = ".",
                 icon = "🤢",
-                description = "The toilet is in the basement of your local high school. Even rats die from the smell.",
+                description = ".",
                 conditions = shelterCondition
             )
 
             val difficulty = GameDifficulty(
-                name = "Рандом",
+                name = ".",
                 icon = "📦",
-                description = "Уровень сложности выбираеся рандомно"
+                description = "."
             )
 
             var gamePreferences = GamePreferences(
@@ -77,7 +77,6 @@ fun Application.configureSecurity() {
 //            var MapVotesToArrayPlayers = mutableMapOf(
 //                player1 to MapPlayerToMapVotes,
 //                player2 to MapPlayerToMapVotes)
-
 
 
             if(sessionID == "None") {
