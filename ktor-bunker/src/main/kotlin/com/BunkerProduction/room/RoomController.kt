@@ -15,6 +15,14 @@ class RoomController () {
     fun getgameModel(sessionID: String): String { return (gamemodel.values.filter { gameModel -> gameModel.sessionID == sessionID }).toString()}
     fun get_members() : MutableCollection<Player> { return members.values}
     fun roomisExist(sessionID: String): Boolean {return gamemodel.containsKey(sessionID)}
+
+    suspend fun get_waitingRoom(sessionID: String){
+        members.values.forEach{ member ->
+            if(member.sessionID == sessionID)
+                member.socket?.send(Frame.Text((getPlayers(sessionID)).toString()))
+        }
+    }
+
     fun getPlayers(sessionID: String): MutableList<Player> {
         var PlayersList = mutableListOf<Player>()
 //            members.values.forEach { member ->
@@ -68,13 +76,11 @@ class RoomController () {
         sessionID: String,
         socket: WebSocketSession,
     ) {
-
        members[socket.toString()] = Player(
             username = username,
             sessionID = sessionID,
             socket = socket
         )
-
         members[socket.toString()]?.let { gamemodel[sessionID]?.players?.add(it) }
     }
 
@@ -83,18 +89,21 @@ class RoomController () {
 //     print(members.values.toMutableList()) //Хэш-карта играков
 //        print(gamemodel.values) //Хэш-карта игровых моделей
         members.values.forEach{ member ->
-            var gp = gamePreferences
+            gamemodel[sessionID]?.preferences = gamePreferences
+            if(member.sessionID == sessionID)
             member.socket?.send(Frame.Text((getPlayers(sessionID)).toString()))
         }
     }
 
     suspend fun tryDissconect(socket: DefaultWebSocketServerSession, sessionID: String){
-
-        print(getPlayers(sessionID).toString())
         if(members.containsKey(socket.toString())){
             members.remove(socket.toString()) //удаление из хэш карты Members
-
             members[socket.toString()]?.socket?.close() // Закрываем сессию для user
+
+            members.values.forEach{ member ->
+                if(member.sessionID == sessionID)
+                member.socket?.send(Frame.Text((getPlayers(sessionID)).toString()))
+            }
         }
         gamemodel[sessionID]?.players = getPlayers(sessionID) // Обновление модели игры
         if (gamemodel[sessionID]?.players?.isEmpty() == true)

@@ -6,7 +6,7 @@ import com.BunkerProduction.room.Player
 @kotlinx.serialization.Serializable
 data class GameModel(
     var sessionID: String,
-    val preferences: GamePreferences,
+    var preferences: GamePreferences,
     var players: MutableList<Player>?,
     val gameState: GameState,
     var initialNumberOfPlayers: Int,

@@ -45,6 +45,7 @@ fun Route.gameSocket(roomController: RoomController) {
                         socket = this,
                         gameModel = session.gameModel
                     )
+
 //                   send("gameModel: ${roomController.getgameModels()}")
 //                   send("isCreator: ${session.isCreator}")
                 }
@@ -54,9 +55,11 @@ fun Route.gameSocket(roomController: RoomController) {
                         sessionID = session.sessionID,
                         socket = this
                     )
+                    roomController.get_waitingRoom(session.sessionID)
 //                    send("gameModels: ${roomController.getgameModels()}")
 //                   send("isCreator : ${session.isCreator}")
-//                  send(roomController.getPlayers(session.sessionID).toString())
+//                     send(roomController.getPlayers(session.sessionID).toString())
+
 
                 }
                 if ((session.isCreator == "false") && (!roomController.roomisExist(session.sessionID))) {
