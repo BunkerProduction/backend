@@ -66,7 +66,7 @@ fun Route.gameSocket(roomController: RoomController) {
 //                    send("isCreator : ${session.isCreator}")
                 }
                 incoming.consumeEach { frame ->
-                    if ((frame is Frame.Text) && (frame.readText()!="waiting_room")&& (frame.readText()!="game")&& (frame.readText()!="game_models")) {
+                    if ((frame is Frame.Text) && (frame.readText()!="waiting_room")&& (frame.readText()!="game")&& (frame.readText()!="game_models")&& (frame.readText()!="clean")) {
                         val input_json = Json.decodeFromString<GamePreferences>(frame.readText())
                         roomController.GetDataShatus(
                             gamePreferences = input_json,
@@ -84,6 +84,9 @@ fun Route.gameSocket(roomController: RoomController) {
                     }
                     if ((frame is Frame.Text) && (frame.readText()=="game_models"))  {
                         send(roomController.getgameModels().toString())
+                    }
+                    if ((frame is Frame.Text) && (frame.readText()=="clean"))  {
+                        send(roomController.clean())
                     }
 
                 }

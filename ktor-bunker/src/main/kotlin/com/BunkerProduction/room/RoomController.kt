@@ -11,6 +11,7 @@ class RoomController () {
      private val members = ConcurrentHashMap<String, Player>()
      private val gamemodel = ConcurrentHashMap<String, GameModel>()
     fun getgameModels(): MutableList<GameModel> { return gamemodel.values.toMutableList() }
+    fun clean(): String { gamemodel.values.clear(); members.values.clear(); return "Success clean"}
     fun getgameModel(sessionID: String): String { return (gamemodel.values.filter { gameModel -> gameModel.sessionID == sessionID }).toString()}
     fun get_members() : MutableCollection<Player> { return members.values}
     fun roomisExist(sessionID: String): Boolean {return gamemodel.containsKey(sessionID)}
