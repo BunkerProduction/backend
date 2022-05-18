@@ -27,38 +27,11 @@ fun Application.configureSecurity() {
             var turn = call.parameters["turn"] ?: 0
             var round = call.parameters["round"] ?: 0
 
-            val catastrophe = Catastrophe(
-                name = ".",
-                icon = "🍺",
-                shortDescription = ".",
-                fullDescription = "."
-                    )
-
-            val shelterCondition = ShelterCondition(
-                isExposed = false,
-                icon = "🤢",
-                name = ".",
-                description = "."
-            )
-
-            val shelter = Shelter(
-                name = ".",
-                icon = "🤢",
-                description = ".",
-                conditions = shelterCondition
-            )
-
-            val difficulty = GameDifficulty(
-                name = ".",
-                icon = "📦",
-                description = "."
-            )
-
             var gamePreferences = GamePreferences(
-                voitingTime = voitingTime as Int,
-                catastrophe = catastrophe,
-                shelter = shelter,
-                difficulty = difficulty
+                voitingTime = 4,
+                catastropheId = 1,
+                shelterId = 2,
+                difficultyId = 3
             )
             var gameState = GameState.normal //по умолчанию стоит normal
 
@@ -77,7 +50,6 @@ fun Application.configureSecurity() {
 //            var MapVotesToArrayPlayers = mutableMapOf(
 //                player1 to MapPlayerToMapVotes,
 //                player2 to MapPlayerToMapVotes)
-
 
             if((sessionID == "None")&&(isCreator == "true")) {
                 sessionID = roomController.isExist(sessionID)
