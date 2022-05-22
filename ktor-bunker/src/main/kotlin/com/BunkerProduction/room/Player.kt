@@ -5,6 +5,7 @@ import io.ktor.websocket.*
 @kotlinx.serialization.Serializable
 data class Player(
     val username: String,
-    val sessionID: String,
+    var sessionID: String,
     var socket: WebSocketSession?,
+    var isCreator: Boolean
 )

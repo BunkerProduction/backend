@@ -28,7 +28,7 @@ fun Application.configureSecurity() {
             var round = call.parameters["round"] ?: 0
 
             var gamePreferences = GamePreferences(
-                voitingTime = 4,
+                votingTime = 4,
                 catastropheId = 1,
                 shelterId = 2,
                 difficultyId = 3

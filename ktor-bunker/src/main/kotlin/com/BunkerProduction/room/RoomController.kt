@@ -4,6 +4,8 @@ import com.BunkerProduction.other_dataclasses.*
 import com.BunkerProduction.session.GenerateRoomCode
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import java.util.concurrent.ConcurrentHashMap
 
 class RoomController () {
@@ -12,28 +14,42 @@ class RoomController () {
      private val gamemodel = ConcurrentHashMap<String, GameModel>()
     fun getgameModels(): MutableList<GameModel> { return gamemodel.values.toMutableList() }
     fun clean(): String { gamemodel.values.clear(); members.values.clear(); return "Success clean"}
-    fun getgameModel(sessionID: String): String { return (gamemodel.values.filter { gameModel -> gameModel.sessionID == sessionID }).toString()}
+    fun getgameModel(sessionID: String): List<GameModel> { return (gamemodel.values.filter { gameModel -> gameModel.sessionID == sessionID })}
     fun get_members() : MutableCollection<Player> { return members.values}
     fun roomisExist(sessionID: String): Boolean {return gamemodel.containsKey(sessionID)}
 
-    suspend fun get_waitingRoom(sessionID: String){
+    fun get_waitingRoom(sessionID: String): WaitingRoom {
+        var players = mutableListOf<com.BunkerProduction.other_dataclasses.Player>()
         members.values.forEach{ member ->
             if(member.sessionID == sessionID)
-                member.socket?.send(Frame.Text((getPlayers(sessionID)).toString()))
+                players += Player(
+                    username = member.username,
+                    isCreator = member.isCreator
+                )
         }
+        var waitingRoom = WaitingRoom(
+            players = players,
+            sessionID = sessionID
+        )
+        return waitingRoom
+    }
+    fun getPlayers_NONEsocket(sessionID: String): MutableList<com.BunkerProduction.other_dataclasses.Player> {
+        var players = mutableListOf<com.BunkerProduction.other_dataclasses.Player>()
+        members.values.forEach{ member ->
+            if(member.sessionID == sessionID) {
+                players += Player(
+                    username = member.username,
+                    isCreator = member.isCreator
+                )
+            }
+        }
+        return players
+    }
+    fun getPlayers(sessionID: String): MutableList<Player> {
+        val res = (members.values.filter { player -> player.sessionID == sessionID }).toMutableList()
+        return res
     }
 
-    fun getPlayers(sessionID: String): MutableList<Player> {
-        var PlayersList = mutableListOf<Player>()
-//            members.values.forEach { member ->
-//                if (member.sessionID == sessionID) {
-//                    PlayersList.add(member)
-//                }
-//            }
-        val res = (members.values.filter { player -> player.sessionID == sessionID }).toMutableList()
-        PlayersList = res
-        return PlayersList
-    }
     fun isExist(sessionID: String): String { // Для нового подключения
         var sessionIDmoded = sessionID
         if (sessionIDmoded == "None") {
@@ -58,12 +74,13 @@ class RoomController () {
         members[socket.toString()] = Player(
             username = username,
             sessionID = sessionID,
-            socket = socket
+            socket = socket,
+            isCreator = true
         )
         gamemodel[sessionID] = GameModel(
             sessionID = sessionID,
             preferences = gameModel.preferences,
-            players = getPlayers(sessionID), //Берет всех играков из сессии, хотя она только что создалась (не нужно )
+            players = getPlayers_NONEsocket(sessionID), //Берет всех играков из сессии, хотя она только что создалась (не нужно )
             gameState = gameModel.gameState,
             initialNumberOfPlayers = gameModel.initialNumberOfPlayers,
             turn = gameModel.turn,
@@ -79,9 +96,20 @@ class RoomController () {
        members[socket.toString()] = Player(
             username = username,
             sessionID = sessionID,
-            socket = socket
+            socket = socket,
+           isCreator = false
         )
-        members[socket.toString()]?.let { gamemodel[sessionID]?.players?.add(it) }
+        var player_NONEsocket = Player(
+                isCreator = false,
+                username = username
+                )
+
+        gamemodel[sessionID]?.players?.add(player_NONEsocket)
+
+        members.values.forEach{ member ->
+            if(member.sessionID == sessionID)
+                member.socket?.send(Frame.Text(Json.encodeToJsonElement(get_waitingRoom(sessionID)).toString()))
+        }
     }
 
     suspend fun GetDataShatus(gamePreferences: GamePreferences, sessionID: String)
@@ -91,21 +119,37 @@ class RoomController () {
         members.values.forEach{ member ->
             gamemodel[sessionID]?.preferences = gamePreferences
             if(member.sessionID == sessionID)
-            member.socket?.send(Frame.Text((getPlayers(sessionID)).toString()))
+            member.socket?.send(Frame.Text(Json.encodeToJsonElement(get_waitingRoom(sessionID)).toString()))
         }
     }
 
     suspend fun tryDissconect(socket: DefaultWebSocketServerSession, sessionID: String){
+        var trig = 0
         if(members.containsKey(socket.toString())){
+
             members.remove(socket.toString()) //удаление из хэш карты Members
             members[socket.toString()]?.socket?.close() // Закрываем сессию для user
-
             members.values.forEach{ member ->
                 if(member.sessionID == sessionID)
-                member.socket?.send(Frame.Text((getPlayers(sessionID)).toString()))
+                member.socket?.send(Frame.Text(Json.encodeToJsonElement(get_waitingRoom(sessionID)).toString()))
+            }
+
+        }
+
+        val hosts = members.values.filter { player -> player.isCreator } //проверка на хоста в комнате
+
+        if(hosts.isEmpty())
+        {
+            members.values.forEach{ member ->
+                if((member.sessionID == sessionID)&&(trig == 0)) {
+                    trig++
+                    member.isCreator = true //Заменяем хоста
+                }
+
             }
         }
-        gamemodel[sessionID]?.players = getPlayers(sessionID) // Обновление модели игры
+
+        gamemodel[sessionID]?.players = getPlayers_NONEsocket(sessionID) // Обновление модели игры
         if (gamemodel[sessionID]?.players?.isEmpty() == true)
         {
             gamemodel.remove(sessionID)
@@ -113,6 +157,7 @@ class RoomController () {
     }
 
 }
+
 
 
 

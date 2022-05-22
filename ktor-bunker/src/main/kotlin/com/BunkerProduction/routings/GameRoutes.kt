@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -55,11 +56,10 @@ fun Route.gameSocket(roomController: RoomController) {
                         sessionID = session.sessionID,
                         socket = this
                     )
-                    roomController.get_waitingRoom(session.sessionID)
+//                    send(Json.encodeToJsonElement(roomController.get_waitingRoom(session.sessionID)).toString())
 //                    send("gameModels: ${roomController.getgameModels()}")
 //                   send("isCreator : ${session.isCreator}")
 //                     send(roomController.getPlayers(session.sessionID).toString())
-
 
                 }
                 if ((session.isCreator == "false") && (!roomController.roomisExist(session.sessionID))) {
@@ -80,13 +80,13 @@ fun Route.gameSocket(roomController: RoomController) {
 //                        send("Players_in_Hash_Map_after_connect: [${roomController.get_members()}]")
                     }
                     if ((frame is Frame.Text) && (frame.readText()=="waiting_room"))  {
-                        send(roomController.getPlayers(session.sessionID).toString())
+                        send(Json.encodeToJsonElement(roomController.get_waitingRoom(session.sessionID)).toString())
                     }
                     if ((frame is Frame.Text) && (frame.readText()=="game"))  {
-                    send(roomController.getgameModel(session.sessionID).toString())
+                    send(Json.encodeToJsonElement(roomController.getgameModel(session.sessionID)).toString())
                     }
                     if ((frame is Frame.Text) && (frame.readText()=="game_models"))  {
-                        send(roomController.getgameModels().toString())
+                        send(Json.encodeToJsonElement(roomController.getgameModels()).toString())
                     }
                     if ((frame is Frame.Text) && (frame.readText()=="clean"))  {
                         send(roomController.clean())
