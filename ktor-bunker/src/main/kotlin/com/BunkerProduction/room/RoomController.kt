@@ -3,6 +3,7 @@ package com.BunkerProduction.room
 import com.BunkerProduction.other_dataclasses.*
 import com.BunkerProduction.session.GenerateRoomCode
 import io.ktor.server.websocket.*
+import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
@@ -23,6 +24,7 @@ class RoomController () {
         members.values.forEach{ member ->
             if(member.sessionID == sessionID)
                 players += Player(
+                    id = generateNonce(),
                     username = member.username,
                     isCreator = member.isCreator
                 )
@@ -38,6 +40,7 @@ class RoomController () {
         members.values.forEach{ member ->
             if(member.sessionID == sessionID) {
                 players += Player(
+                    id = generateNonce(),
                     username = member.username,
                     isCreator = member.isCreator
                 )
@@ -72,6 +75,7 @@ class RoomController () {
     )
     {
         members[socket.toString()] = Player(
+            id = generateNonce(),
             username = username,
             sessionID = sessionID,
             socket = socket,
@@ -94,16 +98,19 @@ class RoomController () {
         socket: WebSocketSession,
     ) {
        members[socket.toString()] = Player(
+           id = generateNonce(),
             username = username,
             sessionID = sessionID,
             socket = socket,
            isCreator = false
         )
         var player_NONEsocket = Player(
+                id = generateNonce(),
                 isCreator = false,
                 username = username
                 )
 
+        gamemodel[sessionID]?.initialNumberOfPlayers = gamemodel[sessionID]?.initialNumberOfPlayers!! + 1
         gamemodel[sessionID]?.players?.add(player_NONEsocket)
 
         members.values.forEach{ member ->
@@ -129,11 +136,6 @@ class RoomController () {
 
             members.remove(socket.toString()) //удаление из хэш карты Members
             members[socket.toString()]?.socket?.close() // Закрываем сессию для user
-            members.values.forEach{ member ->
-                if(member.sessionID == sessionID)
-                member.socket?.send(Frame.Text(Json.encodeToJsonElement(get_waitingRoom(sessionID)).toString()))
-            }
-
         }
 
         val hosts = members.values.filter { player -> player.isCreator } //проверка на хоста в комнате
@@ -149,6 +151,11 @@ class RoomController () {
             }
         }
 
+        members.values.forEach{ member ->
+            if(member.sessionID == sessionID)
+                member.socket?.send(Frame.Text(Json.encodeToJsonElement(get_waitingRoom(sessionID)).toString()))
+        }
+        gamemodel[sessionID]?.initialNumberOfPlayers = gamemodel[sessionID]?.initialNumberOfPlayers!! - 1
         gamemodel[sessionID]?.players = getPlayers_NONEsocket(sessionID) // Обновление модели игры
         if (gamemodel[sessionID]?.players?.isEmpty() == true)
         {

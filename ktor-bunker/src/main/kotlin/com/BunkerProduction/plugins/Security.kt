@@ -23,7 +23,7 @@ fun Application.configureSecurity() {
             var sessionID = call.parameters["sessionID"] ?: "None"
             var isCreator = call.parameters["isCreator"] ?: "true"
             var voitingTime = call.parameters["voitingTime"] ?: 0
-            var initialNumberOfPlayers = call.parameters["initialNumberOfPlayers"] ?: 0
+            var initialNumberOfPlayers = call.parameters["initialNumberOfPlayers"] ?: 1
             var turn = call.parameters["turn"] ?: 0
             var round = call.parameters["round"] ?: 0
 
