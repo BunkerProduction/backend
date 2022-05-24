@@ -6,6 +6,7 @@ import com.BunkerProduction.session.GameSession
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.websocket.*
+import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.channels.consumeEach
@@ -52,6 +53,7 @@ fun Route.gameSocket(roomController: RoomController) {
                 }
                 if ((session.isCreator == "false") && (roomController.roomisExist(session.sessionID))) {
                     roomController.onJoin(
+                        id = session.id,
                         username = session.username,
                         sessionID = session.sessionID,
                         socket = this
@@ -71,6 +73,7 @@ fun Route.gameSocket(roomController: RoomController) {
                 incoming.consumeEach { frame ->
                     if ((frame is Frame.Text) && (frame.readText()!="waiting_room")&& (frame.readText()!="game")&& (frame.readText()!="game_models")&& (frame.readText()!="clean")) {
                         val input_json = Json.decodeFromString<GamePreferences>(frame.readText())
+
                         roomController.GetDataShatus(
                             gamePreferences = input_json,
                             sessionID = session.sessionID

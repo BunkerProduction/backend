@@ -77,7 +77,7 @@ fun Application.configureSecurity() {
                     round = round as Int,
 //                votes = MapVotesToArrayPlayers
                 )
-                call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
+                call.sessions.set(GameSession(id, username, sessionID, isCreator, gameModel))
             }
 
         }

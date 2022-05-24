@@ -93,12 +93,13 @@ class RoomController () {
 
     }
     suspend fun onJoin(
+        id: String,
         username: String,
         sessionID: String,
         socket: WebSocketSession,
     ) {
        members[socket.toString()] = Player(
-           id = generateNonce(),
+           id = id,
             username = username,
             sessionID = sessionID,
             socket = socket,
