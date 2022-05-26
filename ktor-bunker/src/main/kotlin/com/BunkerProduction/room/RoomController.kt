@@ -24,7 +24,7 @@ class RoomController () {
         members.values.forEach{ member ->
             if(member.sessionID == sessionID)
                 players += Player(
-                    id = generateNonce(),
+                    id = member.id,
                     username = member.username,
                     isCreator = member.isCreator
                 )
@@ -40,7 +40,7 @@ class RoomController () {
         members.values.forEach{ member ->
             if(member.sessionID == sessionID) {
                 players += Player(
-                    id = generateNonce(),
+                    id = member.id,
                     username = member.username,
                     isCreator = member.isCreator
                 )
@@ -68,6 +68,7 @@ class RoomController () {
 
 
     fun onCreateGame(
+        id: String,
         username: String,
         sessionID: String,
         socket: WebSocketSession,
@@ -75,7 +76,7 @@ class RoomController () {
     )
     {
         members[socket.toString()] = Player(
-            id = generateNonce(),
+            id = id,
             username = username,
             sessionID = sessionID,
             socket = socket,
@@ -106,7 +107,7 @@ class RoomController () {
            isCreator = false
         )
         var player_NONEsocket = Player(
-                id = generateNonce(),
+                id = id,
                 isCreator = false,
                 username = username
                 )

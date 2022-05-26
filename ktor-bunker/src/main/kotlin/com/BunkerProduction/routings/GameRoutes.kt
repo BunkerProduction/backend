@@ -42,16 +42,18 @@ fun Route.gameSocket(roomController: RoomController) {
             try {
                 if (session.isCreator == "true") {
                     roomController.onCreateGame(
+                        id = session.id,
                         username = session.username,
                         sessionID = session.sessionID,
                         socket = this,
                         gameModel = session.gameModel
                     )
-
+                    send(session.id)
 //                   send("gameModel: ${roomController.getgameModels()}")
 //                   send("isCreator: ${session.isCreator}")
                 }
                 if ((session.isCreator == "false") && (roomController.roomisExist(session.sessionID))) {
+                    send(session.id)
                     roomController.onJoin(
                         id = session.id,
                         username = session.username,

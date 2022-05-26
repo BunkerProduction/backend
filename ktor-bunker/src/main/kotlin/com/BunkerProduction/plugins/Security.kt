@@ -7,6 +7,7 @@ import com.BunkerProduction.room.RoomController
 import com.BunkerProduction.session.GameSession
 import io.ktor.server.application.*
 import io.ktor.server.sessions.*
+import io.ktor.util.*
 import org.kodein.di.newInstance
 
 
@@ -64,7 +65,8 @@ fun Application.configureSecurity() {
                     round = round as Int,
 //                votes = MapVotesToArrayPlayers
                 )
-                call.sessions.set(GameSession(username, sessionID, isCreator, gameModel))
+                val id = generateNonce()
+                call.sessions.set(GameSession(id, username, sessionID, isCreator, gameModel))
             }
             if((sessionID != "None")&&(isCreator == "false")) {
                 var gameModel = GameModel(
@@ -77,6 +79,7 @@ fun Application.configureSecurity() {
                     round = round as Int,
 //                votes = MapVotesToArrayPlayers
                 )
+                val id = generateNonce()
                 call.sessions.set(GameSession(id, username, sessionID, isCreator, gameModel))
             }
 
