@@ -5,6 +5,7 @@ import com.BunkerProduction.room.Player
 
 @kotlinx.serialization.Serializable
 data class GameModel(
+    val type: Type_Model,
     var sessionID: String,
     var preferences: GamePreferences,
     var players: MutableList<com.BunkerProduction.other_dataclasses.Player>?,

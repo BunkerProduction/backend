@@ -1,7 +1,7 @@
 package com.BunkerProduction.other_dataclasses
+
 @kotlinx.serialization.Serializable
-data class WaitingRoom(
+data class Handshake(
     val type: Type_Model,
-    var players: List<Player>,
-    var sessionID: String
+    val id: String
 )

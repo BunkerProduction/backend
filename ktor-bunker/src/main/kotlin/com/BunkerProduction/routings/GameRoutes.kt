@@ -1,6 +1,8 @@
 package com.BunkerProduction.routings
 
 import com.BunkerProduction.other_dataclasses.GamePreferences
+import com.BunkerProduction.other_dataclasses.Handshake
+import com.BunkerProduction.other_dataclasses.Type_Model
 import com.BunkerProduction.room.RoomController
 import com.BunkerProduction.session.GameSession
 import io.ktor.server.routing.*
@@ -26,7 +28,6 @@ class Connection(val session: DefaultWebSocketSession) {
 fun Route.gameSocket(roomController: RoomController) {
     val connections = Collections.synchronizedSet<Connection?>(LinkedHashSet())
     webSocket("/game") {
-            send("You are connected!")
             val thisConnection = Connection(this)
             connections += thisConnection
 
@@ -48,12 +49,22 @@ fun Route.gameSocket(roomController: RoomController) {
                         socket = this,
                         gameModel = session.gameModel
                     )
-                    send(session.id)
+                    val handshake = Handshake(
+                        type = Type_Model.handshake,
+                        id = session.id
+                    )
+                    send(Json.encodeToJsonElement(handshake).toString())
+
 //                   send("gameModel: ${roomController.getgameModels()}")
 //                   send("isCreator: ${session.isCreator}")
                 }
                 if ((session.isCreator == "false") && (roomController.roomisExist(session.sessionID))) {
-                    send(session.id)
+                    val handshake = Handshake(
+                        type = Type_Model.handshake,
+                        id = session.id
+                    )
+                    send(Json.encodeToJsonElement(handshake).toString())
+
                     roomController.onJoin(
                         id = session.id,
                         username = session.username,

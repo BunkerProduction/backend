@@ -54,8 +54,9 @@ fun Application.configureSecurity() {
 
             if((sessionID == "None")&&(isCreator == "true")) {
                 sessionID = roomController.isExist(sessionID)
-
+            }
                 var gameModel = GameModel(
+                    type = Type_Model.game_model,
                     sessionID = sessionID,
                     preferences = gamePreferences,
                     players = null,
@@ -67,21 +68,6 @@ fun Application.configureSecurity() {
                 )
                 val id = generateNonce()
                 call.sessions.set(GameSession(id, username, sessionID, isCreator, gameModel))
-            }
-            if((sessionID != "None")&&(isCreator == "false")) {
-                var gameModel = GameModel(
-                    sessionID = sessionID,
-                    preferences = gamePreferences,
-                    players = null,
-                    gameState = gameState,
-                    initialNumberOfPlayers = initialNumberOfPlayers as Int,
-                    turn = turn as Int,
-                    round = round as Int,
-//                votes = MapVotesToArrayPlayers
-                )
-                val id = generateNonce()
-                call.sessions.set(GameSession(id, username, sessionID, isCreator, gameModel))
-            }
 
         }
 

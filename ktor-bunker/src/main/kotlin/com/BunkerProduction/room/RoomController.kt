@@ -3,7 +3,6 @@ package com.BunkerProduction.room
 import com.BunkerProduction.other_dataclasses.*
 import com.BunkerProduction.session.GenerateRoomCode
 import io.ktor.server.websocket.*
-import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
@@ -21,19 +20,19 @@ class RoomController () {
 
     fun get_waitingRoom(sessionID: String): WaitingRoom {
         var players = mutableListOf<com.BunkerProduction.other_dataclasses.Player>()
-        members.values.forEach{ member ->
-            if(member.sessionID == sessionID)
+        members.values.forEach { member ->
+            if (member.sessionID == sessionID)
                 players += Player(
                     id = member.id,
                     username = member.username,
                     isCreator = member.isCreator
                 )
         }
-        var waitingRoom = WaitingRoom(
+        return WaitingRoom(
+            type = Type_Model.waiting_room,
             players = players,
             sessionID = sessionID
         )
-        return waitingRoom
     }
     fun getPlayers_NONEsocket(sessionID: String): MutableList<com.BunkerProduction.other_dataclasses.Player> {
         var players = mutableListOf<com.BunkerProduction.other_dataclasses.Player>()
@@ -83,6 +82,7 @@ class RoomController () {
             isCreator = true
         )
         gamemodel[sessionID] = GameModel(
+            type = Type_Model.game_model,
             sessionID = sessionID,
             preferences = gameModel.preferences,
             players = getPlayers_NONEsocket(sessionID), //Берет всех играков из сессии, хотя она только что создалась (не нужно )
